@@ -1,0 +1,775 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EF AUCTION</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+body{background:#020617;color:#fff;font-family:Arial;text-align:center}
+input,button{padding:10px;margin:5px;border:none;border-radius:6px}
+button{color:#fff;cursor:pointer}
+.adminBtn{background:#2563eb}
+.bid{background:#16a34a}
+.out{background:#dc2626}
+button:disabled{opacity:.4;cursor:not-allowed}
+.card{border:1px solid #334155;padding:10px;margin:8px;border-radius:8px}
+.title{font-size:1.8rem;font-weight:bold}
+.teamTitle{font-size:1.2rem;color:#22d3ee}
+.resultBox{border:2px solid #22c55e;padding:12px;margin:12px;border-radius:8px}
+.unsold{border-color:#ef4444;color:#ef4444}
+/* ===== TEAM LIGHT ===== */
+.light{
+  display:inline-block;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  margin-right:8px;
+}
+.green{ background:#22c55e; }
+.red{ background:#ef4444; }
+/* ===== LEFT FIXED LIVE STATUS BOX ===== */
+#teamLights{
+  position:fixed;
+  left:10px;
+  top:80px;
+  width:220px;
+  background:#020617;
+  border:2px solid #334155;
+  border-radius:10px;
+  padding:10px;
+  max-height:70vh;
+  overflow-y:auto;
+  z-index:999;
+}
+
+/* mobile pe niche aa jaye */
+@media (max-width:600px){
+  #teamLights{
+    position:static;
+    width:100%;
+    margin-top:10px;
+  }
+}
+
+
+
+
+/* ===== STEP 1 : MOBILE FRIENDLY ===== */
+@media (max-width:600px){
+
+  body{
+    font-size:14px;
+    padding-bottom:90px;
+  }
+
+  .title{
+    font-size:1.4rem;
+  }
+
+  input, button{
+    width:100%;
+    font-size:16px;
+  }
+
+  button{
+    margin:6px 0;
+  }
+
+  .card{
+    font-size:14px;
+  }
+}
+/* ===== OWNER BOTTOM NAV STYLING ===== */
+#bottomNav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:linear-gradient(180deg,#020617,#020617e6);
+  border-top:2px solid #334155;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 8px;
+  z-index:1000;
+  box-shadow:0 -6px 20px rgba(0,0,0,0.6);
+}
+
+#bottomNav button{
+  flex:1;
+  margin:0 6px;
+  padding:12px 0;
+  background:#1e293b;
+  color:#cbd5f5;
+  border-radius:12px;
+  font-weight:bold;
+  letter-spacing:0.5px;
+  transition:all 0.25s ease;
+}
+
+/* hover effect */
+#bottomNav button:hover{
+  background:#2563eb;
+  color:#fff;
+  transform:translateY(-2px);
+}
+
+/* active tab */
+#bottomNav button.active{
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#020617;
+  box-shadow:0 0 12px rgba(34,197,94,0.6);
+}
+
+
+/* ===== ADMIN PANEL BUTTON UPGRADE ===== */
+#adminPanel .adminBtn{
+  background:linear-gradient(135deg,#2563eb,#1d4ed8);
+  color:#fff;
+  font-weight:bold;
+  letter-spacing:0.4px;
+  border-radius:12px;
+  padding:12px 16px;
+  margin:6px 0;
+  transition:all 0.25s ease;
+  box-shadow:0 4px 12px rgba(37,99,235,0.35);
+}
+
+/* hover effect */
+#adminPanel .adminBtn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 18px rgba(37,99,235,0.6);
+}
+
+/* SOLD button – green */
+#adminPanel .adminBtn:nth-of-type(3){
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  box-shadow:0 4px 12px rgba(34,197,94,0.35);
+}
+
+/* UNSOLD button – red */
+#adminPanel .adminBtn:nth-of-type(4){
+  background:linear-gradient(135deg,#ef4444,#dc2626);
+  box-shadow:0 4px 12px rgba(239,68,68,0.35);
+}
+
+/* RESET button – warning */
+#adminPanel .adminBtn:nth-of-type(5){
+  background:linear-gradient(135deg,#f97316,#ea580c);
+  box-shadow:0 4px 12px rgba(249,115,22,0.4);
+}
+/* ===== OWNER TEAM HIGHLIGHT ===== */
+.myTeam{
+  /* ===== OWNER SOLD PLAYER HIGHLIGHT ===== */
+.myPlayer{
+  border:2px solid #22c55e !important;
+  box-shadow:0 0 15px rgba(34,197,94,0.6);
+  background:linear-gradient(135deg,#022c22,#020617);
+}
+
+  border:2px solid #22c55e !important;
+  box-shadow:0 0 15px rgba(34,197,94,0.6);
+  background:linear-gradient(135deg,#022c22,#020617);
+}
+
+.myTeam .light{
+  box-shadow:0 0 10px rgba(34,197,94,0.9);
+}
+/* OFFLINE OWNER LOOK */
+.offline{
+  opacity:0.4;
+  filter:grayscale(1);
+}
+
+.statusText{
+  font-size:12px;
+  margin-left:6px;
+}
+
+
+
+
+
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginBox">
+  <h2 class="title">EF AUCTION LOGIN</h2>
+  <input id="loginUser" placeholder="ADMIN / SHP / IT / TS / VZ / GXP / DAN"><br>
+  <input id="loginKey" placeholder="Pass Key"><br>
+  <button onclick="handleLogin()">LOGIN</button>
+</div>
+
+<div id="app" style="display:none">
+
+  <div class="title">EF AUCTION</div>
+
+  <!-- 🔔 ADMIN ANNOUNCEMENT POPUP -->
+  <div id="announcePopup"
+    style="
+      position:fixed;
+      left:10px;
+      top:40%;
+      background:#0f172a;
+      border:2px solid #38bdf8;
+      padding:15px;
+      border-radius:8px;
+      display:none;
+      max-width:260px;
+      text-align:left;
+      z-index:999;
+    ">
+  </div>
+
+  <!-- OWNER HEADER -->
+  <div id="ownerHeader" style="display:none">
+    <hr>
+    <div class="teamTitle">TEAM : <span id="ownerTeam"></span></div>
+    <hr>
+  </div>
+
+  <!-- PLAYER INFO -->
+  <h2 id="playerName">Waiting…</h2>
+  <h3>Price: <span id="price">0</span></h3>
+  <h4>Last Bid: <span id="lastBid">---</span></h4>
+
+  <!-- RESULT -->
+  <div id="result" style="display:none" class="resultBox"></div>
+
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel" style="display:none" class="card">
+  <h3>ADMIN PANEL</h3>
+
+  <input id="playerInput" placeholder="Player Name"><br>
+  <input id="basePrice" placeholder="Base Price (default 50)" value="50"><br>
+
+  <button class="adminBtn" onclick="nextPlayer()">NEXT PLAYER</button>
+  <button id="incBtn" class="adminBtn" onclick="increasePrice()">+10</button>
+  <button class="adminBtn" onclick="sold()">SOLD</button>
+  <button class="adminBtn" onclick="unsold()">UNSOLD</button>
+  <button class="adminBtn" onclick="undoSold()">UNDO LAST SOLD</button>
+  <button class="adminBtn" onclick="resetAuction()">RESET AUCTION</button>
+
+
+    <hr>
+    <h4>ADMIN SPEAKING</h4>
+
+    <button class="adminBtn" onclick="announce('Are you ready for the next player?')">
+      ARE YOU READY
+    </button>
+
+    <button class="adminBtn" onclick="announce('Any one interested?')">
+      ANY ONE INTERESTED
+    </button>
+
+    <button class="adminBtn" onclick="announce('Going for ONE')">
+      GOING FOR ONE
+    </button>
+
+    <button class="adminBtn" onclick="announce('Going for TWO')">
+      GOING FOR TWO
+    </button>
+
+    <button class="adminBtn" onclick="announce('Come on owners, lets bid!')">
+      COME ON OWNERS
+    </button>
+  </div>
+
+
+  <!-- OWNER PANEL -->
+<div id="ownerPanel" style="display:none">
+  <button id="bidBtn" class="bid" onclick="bid()">BID</button>
+  <button class="out" onclick="out()">OUT</button>
+</div>
+
+
+  <hr>
+  <h3>ALL TEAMS STATUS</h3>
+  <div id="teams"></div>
+  <!-- ✅ STEP 8.1 ADD BELOW -->
+   <hr>
+  <h3>LIVE BIDDING STATUS</h3>
+  <div id="teamLights"></div>
+
+<hr>
+<h3>SOLD PLAYERS</h3>
+<div id="soldPlayers"></div>
+
+</div>
+<!-- ===== OWNER BOTTOM NAV (ONLY FOR OWNERS) ===== -->
+<div id="bottomNav" style="display:none; position:fixed; bottom:0; left:0; width:100%; background:#020617; border-top:2px solid #334155; display:flex; justify-content:space-around; padding:8px 0; z-index:1000;">
+  <button onclick="showTab('live')">LIVE</button>
+  <button onclick="showTab('status')">STATUS</button>
+  <button onclick="showTab('players')">PLAYERS</button>
+</div>
+
+
+<script>
+/* ================= FIREBASE ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyDI90juhgTmNBv_lTcCkImhe4GfNlef6YQ",
+  authDomain: "auction-auction-d049a.firebaseapp.com",
+  databaseURL: "https://auction-auction-d049a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "auction-auction-d049a",
+  storageBucket: "auction-auction-d049a.firebasestorage.app",
+  messagingSenderId: "150739598900",
+  appId: "1:150739598900:web:63874caa1fe7f74bf85461"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ===== KBC SOUND EFFECTS =====
+const kbcWin = new Audio("https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3");
+const kbcLose = new Audio("https://assets.mixkit.co/active_storage/sfx/2020/2020-preview.mp3");
+
+kbcWin.volume = 0.9;
+kbcLose.volume = 0.9;
+
+
+/* ================= GLOBAL ================= */
+const TEAMS=["SHP","IT","TS","VZ","GXP","DAN"];
+let role="";
+let hideTimer=null;
+const ADMIN_PASSWORD = "124421";
+const OWNER_PASSWORDS = {
+  "SHP": "26786",
+  "IT":  "26202",
+  "TS":  "26914",
+  "VZ":  "26731",
+  "GXP": "26983",
+  "DAN": "26500"
+};
+
+
+
+/* ================= LOGIN ================= */
+function handleLogin(){
+  const u=loginUser.value.trim().toUpperCase();
+  const k=loginKey.value.trim();
+
+  if(u==="ADMIN"){
+
+  if(k !== ADMIN_PASSWORD){
+    alert("Wrong ADMIN password");
+    return;
+  }
+
+  role="ADMIN";
+  isLoggedIn = true;
+
+  // 🔐 admin session mark
+  sessionStorage.setItem("role","ADMIN");
+
+  loginBox.style.display="none";
+  app.style.display="block";
+  adminPanel.style.display="block";
+  initTeams();
+  return;
+}
+
+
+  if(TEAMS.includes(u)){
+
+  // 🔐 OWNER PASSWORD CHECK
+  if(OWNER_PASSWORDS[u] !== k){
+    alert("Wrong owner password");
+    return;
+  }
+
+  role = u;
+  isLoggedIn = true;
+
+  sessionStorage.setItem("role","OWNER");
+  sessionStorage.setItem("team", u);
+
+  loginBox.style.display="none";
+  app.style.display="block";
+  ownerPanel.style.display="block";
+  ownerHeader.style.display="block";
+  ownerTeam.innerText=role;
+  document.getElementById("bottomNav").style.display = "flex";
+  showTab("live");
+  return;
+}
+
+  alert("Invalid Login");
+}
+
+/* ================= INIT ================= */
+function initTeams(){
+  TEAMS.forEach(t=>{
+    db.ref("teams/"+t).set({purse:1200,slots:8});
+  });
+}
+
+/* ================= ADMIN ================= */
+function nextPlayer(){
+  const bp = parseInt(basePrice.value) || 50;
+
+  // ✅ CLEAR OLD RESULT & ANNOUNCEMENT
+  db.ref("auction/result").remove();
+  db.ref("announcement").remove();
+
+  db.ref("auction").set({
+  player: playerInput.value || "Unknown",
+  price: bp,
+  lastBid: "-",
+  lock: false,
+  activePair: {},
+  lastBidderLocked: null,
+  canIncrease: false,   // 👈 ADD THIS
+  result: null
+});
+
+}
+
+function increasePrice(){
+  db.ref("auction").transaction(a=>{
+    if(!a) return a;
+
+    // ❌ Agar koi bid nahi hua, +10 allow nahi
+    if(!a.canIncrease) return a;
+
+    // ❌ Max price limit
+    if(a.price >= 1200) return a;
+
+    // ✅ Price badhao
+    a.price += 10;
+
+    // ✅ Next bid allow
+    a.lock = false;
+
+    // ✅ Same owner dobara bid na kare
+    a.lastBidderLocked = a.lastBid;
+
+    // ❌ Dubara +10 tab tak nahi jab tak next bid na ho
+    a.canIncrease = false;
+
+    return a;
+  });
+}
+
+
+function sold(){
+  db.ref("auction").once("value",snap=>{
+    const a=snap.val();
+    if(!a || a.lastBid==="-" ) return;
+
+    db.ref("teams/"+a.lastBid).transaction(t=>{
+      if(!t || t.purse<a.price || t.slots<=0) return t;
+      t.purse-=a.price;
+      t.slots--;
+      return t;
+    });
+
+    db.ref("auction").update({
+  result:{
+    status:"SOLD",
+    team:a.lastBid,
+    price:a.price
+  },
+  lastSold:{
+    player: a.player,
+    team: a.lastBid,
+    price: a.price
+  },
+  activePair:{},
+  lock:true
+});
+
+   // 🔊 KBC WIN SOUND
+  kbcWin.currentTime = 0;
+  kbcWin.play();
+
+// 👇 STEP 8.2 ADD HERE
+    db.ref("soldPlayers").push({
+      player: a.player,
+      team: a.lastBid,
+      price: a.price,
+      time: Date.now()
+    });
+
+  });
+}
+
+
+function unsold(){
+  db.ref("auction").update({
+    result:{status:"UNSOLD"},
+    activePair:{},
+    lock:true
+  });
+
+  // 🔊 KBC LOSE SOUND
+  kbcLose.currentTime = 0;
+  kbcLose.play();
+
+}
+// 👇 NEW FUNCTION ADDED
+function resetAuction(){
+  if(!confirm("Are you sure you want to RESET the entire auction?")){
+    return;
+  }
+  // 🔥 CLEAR SOLD PLAYERS FROM UI (IMPORTANT)
+  const box = document.getElementById("soldPlayers");
+  if(box) box.innerHTML = "";
+
+  db.ref("soldPlayers").remove();
+
+  TEAMS.forEach(t=>{
+    db.ref("teams/"+t).set({
+      purse: 1200,
+      slots: 8
+    });
+  });
+
+  db.ref("auction").set({
+    player: "Waiting…",
+    price: 0,
+    lastBid: "-",
+    lock: true,
+    activePair: {},
+    lastBidderLocked: null,
+    result: null
+  });
+
+  db.ref("announcement").remove();
+
+  alert("Auction RESET successful");
+}
+
+
+/* 🔊 ADMIN ANNOUNCE */
+function announce(msg){
+  db.ref("announcement").set({
+    text: msg,
+    time: Date.now()
+  });
+}
+
+/* ================= OWNER ================= */
+function bid(){
+  db.ref("auction").once("value", snap => {
+    const a = snap.val();
+    if(!a || a.lock) return alert("Wait for admin");
+
+    if(a.lastBidderLocked === role)
+      return alert("You already bid, wait");
+
+    // 🔒 CHECK PURSE & SLOT FIRST
+    db.ref("teams/" + role).once("value", ts => {
+      const t = ts.val();
+      if(!t || t.purse < a.price || t.slots <= 0){
+        alert("Not enough purse or slots");
+        return;
+      }
+
+      // 👇 BID LOGIC ONLY AFTER CHECK PASSES
+      let pair = a.activePair || {};
+      if(Object.keys(pair).length >= 2 && !pair[role])
+        return alert("Only 2 owners allowed");
+
+      pair[role] = true;
+      db.ref("auction").update({
+         activePair: pair,
+         lastBid: role,
+         lock: true,
+        canIncrease: true   // 👈 BID hua, admin +10 kar sakta
+      });
+
+    });
+  });
+}
+
+
+function out(){
+  db.ref("auction/activePair/"+role).remove();
+  alert("You are OUT");
+}
+
+/* ================= LISTENERS ================= */
+db.ref("auction").on("value",snap=>{
+  if(!snap.exists()) return;
+  const a=snap.val();
+  
+  // ===== LIVE TEAM LIGHT STATUS =====
+const lightBox = document.getElementById("teamLights");
+if(lightBox){
+  lightBox.innerHTML = "";
+
+  const active = a.activePair || {};
+
+  TEAMS.forEach(t=>{
+  const isGreen = active[t];
+  const myClass = (role === t) ? "myTeam" : "";
+
+  lightBox.innerHTML += `
+    <div class="card ${myClass}">
+      <span class="light ${isGreen ? "green" : "red"}"></span>
+      <b>${t}</b>
+      ${isGreen ? "(BIDDING)" : "(OUT / FREE)"}
+      ${role === t ? "⭐" : ""}
+    </div>
+  `;
+});
+
+
+
+  playerName.innerText=a.player;
+  price.innerText=a.price;
+  lastBid.innerText=a.lastBid;
+
+  if(role!=="ADMIN"){
+    bidBtn.disabled = a.lock || a.lastBidderLocked===role;
+  }
+
+  // ===== ADMIN +10 BUTTON ENABLE / DISABLE =====
+if(role === "ADMIN"){
+  const incBtn = document.getElementById("incBtn");
+  if(incBtn){
+    incBtn.disabled = !a.canIncrease;
+  }
+}
+
+
+  if(a.result){
+    result.style.display="block";
+    if(a.result.status==="SOLD"){
+      result.className="resultBox";
+      result.innerHTML=`PLAYER : <b>${a.player}</b><br>SOLD TO : <b>${a.result.team}</b><br>PRICE : <b>${a.result.price}</b>`;
+    }else{
+      result.className="resultBox unsold";
+      result.innerHTML=`PLAYER : <b>${a.player}</b><br>STATUS : <b>UNSOLD</b>`;
+    }
+    clearTimeout(hideTimer);
+    hideTimer=setTimeout(()=>result.style.display="none",5000);
+  }
+}});
+
+/* 🔔 ANNOUNCEMENT LISTENER */
+db.ref("announcement").on("value",snap=>{
+  if(!snap.exists()) return;
+  const box=document.getElementById("announcePopup");
+  box.innerHTML="<b>ADMIN:</b><br>"+snap.val().text;
+  box.style.display="block";
+  setTimeout(()=>box.style.display="none",3000);
+});
+
+/* TEAMS */
+/* TEAMS STATUS (WITH OWNER HIGHLIGHT) */
+db.ref("teams").on("value", snap => {
+  teams.innerHTML = "";
+
+  snap.forEach(c => {
+    const t = c.val();
+
+    // ⭐ owner's team check
+    const myClass = (role === c.key) ? "myTeam" : "";
+    const star = (role === c.key) ? " ⭐ MY TEAM" : "";
+
+    teams.innerHTML += `
+      <div class="card ${myClass}">
+        <b>${c.key}</b>${star}<br>
+        Purse: ${t.purse}<br>
+        Slots: ${t.slots}/8
+      </div>
+    `;
+  });
+});
+
+
+// ================= SOLD PLAYERS LIST (FINAL FIX) =================
+window.addEventListener("load", () => {
+  const soldBox = document.getElementById("soldPlayers");
+
+  if (!soldBox) {
+    console.error("soldPlayers div not found");
+    return;
+  }
+
+  db.ref("soldPlayers").on("child_added", snap => {
+  const p = snap.val();
+
+  // ⭐ check if this player belongs to logged-in owner
+  const myClass = (role === p.team) ? "myPlayer" : "";
+  const tag = (role === p.team) ? " ⭐ MY PLAYER" : "";
+
+  const div = document.createElement("div");
+  div.className = `card ${myClass}`;
+  div.innerHTML = `
+    <b>${p.player}</b>${tag}<br>
+    Team: ${p.team}<br>
+    Price: ${p.price}
+  `;
+
+  soldBox.prepend(div); // latest on top
+});
+
+});
+
+// ===== OWNER TAB SWITCHING =====
+function showTab(tab){
+  document.getElementById("teamLights").style.display = "none";
+  document.getElementById("teams").style.display = "none";
+  document.getElementById("soldPlayers").style.display = "none";
+
+  if(tab === "live"){
+    document.getElementById("teamLights").style.display = "block";
+  }
+  if(tab === "status"){
+    document.getElementById("teams").style.display = "block";
+  }
+  if(tab === "players"){
+    document.getElementById("soldPlayers").style.display = "block";
+  }
+}
+function undoSold(){
+  if(!confirm("Undo last SOLD player?")) return;
+
+  db.ref("auction/lastSold").once("value", snap => {
+    if(!snap.exists()){
+      alert("Nothing to undo");
+      return;
+    }
+
+    const ls = snap.val();
+
+    // 🔁 purse & slot wapas
+    db.ref("teams/" + ls.team).transaction(t => {
+      if(!t) return t;
+      t.purse += ls.price;
+      t.slots += 1;
+      return t;
+    });
+
+    // ❌ last sold player remove
+    db.ref("soldPlayers").limitToLast(1).once("value", s => {
+      s.forEach(c => c.ref.remove());
+    });
+
+    // 🔄 auction ko live banao
+    db.ref("auction").update({
+      player: ls.player,
+      price: ls.price,
+      lastBid: "-",
+      lock: false,
+      activePair: {},
+      result: null,
+      lastSold: null
+    });
+
+    alert("UNDO successful");
+  });
+}
+
+</script>
+
+</body>
+</html>
