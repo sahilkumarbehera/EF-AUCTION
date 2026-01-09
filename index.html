@@ -770,6 +770,23 @@ function undoSold(){
 }
 
 </script>
+<!-- CHAT BUTTON -->
+<div id="chatBtn" style="display:none;">💬 CHAT</div>
+
+<!-- CHAT PANEL -->
+<div id="chatPanel">
+  <div id="chatTop">
+    <span>LIVE CHAT</span>
+    <span id="chatClose">✖</span>
+  </div>
+
+  <div id="chatMessages"></div>
+
+  <div id="chatInputBox">
+    <input id="chatInput" placeholder="Type here..." />
+    <button onclick="sendChat()">Send</button>
+  </div>
+</div>
 
 </body>
 </html>
