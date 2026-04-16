@@ -1,0 +1,254 @@
+/* ===== BASE ===== */
+body {
+  background: #020617;
+  color: #fff;
+  font-family: Arial;
+  text-align: center;
+}
+
+input, button {
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  border-radius: 6px;
+}
+
+button {
+  color: #fff;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== BUTTON TYPES ===== */
+.adminBtn {
+  background: #2563eb;
+}
+
+.bid {
+  background: #16a34a;
+}
+
+.out {
+  background: #dc2626;
+}
+
+/* ===== CARD ===== */
+.card {
+  border: 1px solid #334155;
+  padding: 10px;
+  margin: 8px;
+  border-radius: 8px;
+}
+
+/* ===== TYPOGRAPHY ===== */
+.title {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.teamTitle {
+  font-size: 1.2rem;
+  color: #22d3ee;
+}
+
+/* ===== RESULT BOX ===== */
+.resultBox {
+  border: 2px solid #22c55e;
+  padding: 12px;
+  margin: 12px;
+  border-radius: 8px;
+}
+
+.unsold {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+/* ===== TEAM LIGHT INDICATOR ===== */
+.light {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.green {
+  background: #22c55e;
+}
+
+.red {
+  background: #ef4444;
+}
+
+/* ===== LIVE STATUS SIDEBAR ===== */
+#teamLights {
+  position: fixed;
+  left: 10px;
+  top: 80px;
+  width: 220px;
+  background: #020617;
+  border: 2px solid #334155;
+  border-radius: 10px;
+  padding: 10px;
+  max-height: 70vh;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+/* ===== ANNOUNCEMENT POPUP ===== */
+#announcePopup {
+  position: fixed;
+  left: 10px;
+  top: 40%;
+  background: #0f172a;
+  border: 2px solid #38bdf8;
+  padding: 15px;
+  border-radius: 8px;
+  display: none;
+  max-width: 260px;
+  text-align: left;
+  z-index: 999;
+}
+
+/* ===== OWNER BOTTOM NAV ===== */
+/* BUG FIX: was display:flex in CSS + display:none AND display:flex both in HTML inline
+   style, causing nav to always show. Now controlled entirely by JS. */
+#bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(180deg, #020617, #020617e6);
+  border-top: 2px solid #334155;
+  display: none; /* hidden by default; JS sets to flex for owners */
+  justify-content: space-around;
+  padding: 10px 8px;
+  z-index: 1000;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.6);
+}
+
+#bottomNav button {
+  flex: 1;
+  margin: 0 6px;
+  padding: 12px 0;
+  background: #1e293b;
+  color: #cbd5f5;
+  border-radius: 12px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease;
+}
+
+#bottomNav button:hover {
+  background: #2563eb;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+#bottomNav button.active {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #020617;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
+}
+
+/* ===== ADMIN PANEL BUTTONS ===== */
+#adminPanel .adminBtn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  font-weight: bold;
+  letter-spacing: 0.4px;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 6px 0;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+#adminPanel .adminBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.6);
+}
+
+/* SOLD button – green */
+#adminPanel .adminBtn:nth-of-type(3) {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+}
+
+/* UNSOLD button – red */
+#adminPanel .adminBtn:nth-of-type(4) {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+
+/* RESET button – warning */
+#adminPanel .adminBtn:nth-of-type(5) {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+}
+
+/* ===== OWNER TEAM HIGHLIGHT ===== */
+/* BUG FIX: .myPlayer was accidentally nested inside .myTeam braces — broken CSS.
+   They are now two separate, correctly scoped rules. */
+.myTeam {
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+  background: linear-gradient(135deg, #022c22, #020617);
+}
+
+.myTeam .light {
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+}
+
+.myPlayer {
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+  background: linear-gradient(135deg, #022c22, #020617);
+}
+
+/* ===== OFFLINE OWNER ===== */
+.offline {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+
+.statusText {
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 600px) {
+  #teamLights {
+    position: static;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  body {
+    font-size: 14px;
+    padding-bottom: 90px;
+  }
+
+  .title {
+    font-size: 1.4rem;
+  }
+
+  input, button {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  button {
+    margin: 6px 0;
+  }
+
+  .card {
+    font-size: 14px;
+  }
+}
