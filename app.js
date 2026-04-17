@@ -1,21 +1,3 @@
-
-// const firebaseConfig = {
-//   apiKey: "AIzaSyDI90juhgTmNBv_lTcCkImhe4GfNlef6YQ",
-//   authDomain: "auction-auction-d049a.firebaseapp.com",
-//   databaseURL: "https://ef-auction-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
-//   projectId: "auction-auction-d049a",
-//   storageBucket: "auction-auction-d049a.firebasestorage.app",
-//   messagingSenderId: "150739598900",
-//   appId: "1:150739598900:web:63874caa1fe7f74bf85461"
-// };
-
-// firebase.initializeApp(firebaseConfig);
-// const db = firebase.database();
-// Import the functions you need from the SDKs you need
-/* ================= FIREBASE CONFIG ================= */
-/* ================= FIREBASE CONFIG ================= */
-// DO NOT use "import" statements here if you are using script tags in HTML
-/* ================= FIREBASE CONFIG ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyDI90juhgTmNBv_lTcCkImhe4GfNlef6YQ",
   authDomain: "auction-auction-d049a.firebaseapp.com",
