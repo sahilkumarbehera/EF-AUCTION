@@ -132,15 +132,17 @@ function nextPlayer() {
 function increasePrice() {
   db.ref("auction").transaction(a => {
     if (!a)               return a;
-    if (!a.canIncrease)   return a;   // no bid yet — block +10
-    if (a.price >= 1200)  return a;   // max price cap
+    if (!a.canIncrease)   return a;
+    if (a.price >= 1200)  return a;
 
     a.price += 10;
-    a.lastBidderLocked = a.lastBid;   // same owner can't re-bid immediately
-    a.canIncrease      = false;       // re-enable only after next bid
+    a.lastBidderLocked = a.lastBid;
+    a.canIncrease      = false;
+    a.lock             = false;  // <-- ADD THIS LINE
     return a;
   });
 }
+
 
 function sold() {
   db.ref("auction").once("value", snap => {
