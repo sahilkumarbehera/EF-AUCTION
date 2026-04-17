@@ -74,7 +74,7 @@ function handleLogin() {
     document.getElementById("adminPanel").style.display = "block";
     // BUG FIX: initTeams() was called on every admin login, wiping purses/slots
     // mid-auction on every refresh. Now only initialises if teams don't exist yet.
-    db.ref("teams").once("value", snap => {
+    db.ref("squards/teams").once("value", snap => {
       if (!snap.exists()) initTeams();
     });
     return;
