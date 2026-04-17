@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script> -->
 
   <!-- Styles -->
   <link rel="stylesheet" href="style.css">
@@ -19,7 +19,7 @@
   <div id="loginBox">
     <h2 class="title">EF AUCTION LOGIN</h2>
     <input id="loginUser" placeholder="ADMIN / SHP / IT / TS / VZ / GXP / DAN"><br>
-    <input id="loginKey" placeholder="Pass Key"><br>
+    <input id="loginKey" type="password" placeholder="Pass Key"><br>
     <button onclick="handleLogin()">LOGIN</button>
   </div>
 
@@ -97,6 +97,9 @@
   </div>
 
   <!-- App Logic -->
-  <script src="app.js"></script>
+
+ <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
