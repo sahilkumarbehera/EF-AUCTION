@@ -136,9 +136,11 @@ function increasePrice() {
     if (a.price >= 1200)  return a;
 
     a.price += 10;
-    a.lastBidderLocked = a.lastBid;
+    // We clear the lastBidderLocked so that the person who DIDN'T just bid 
+    // can now bid again at the new price.
+    a.lastBidderLocked = null; 
     a.canIncrease      = false;
-    a.lock             = false;  // <-- ADD THIS LINE
+    a.lock             = false; 
     return a;
   });
 }
@@ -265,15 +267,14 @@ function announce(msg) {
 function bid() {
   db.ref("auction").once("value", snap => {
     const a = snap.val();
-    if (!a || a.lock) { alert("Wait for admin"); return; }
-    if (a.lastBidderLocked === role) { alert("You already bid, wait"); return; }
+    if (!a || a.lock) return; // Button should be disabled anyway, but safe-guarding
 
-    // ❌ SAME OWNER trying to bid again
-    if (a.lastBidderLocked === role) {
-      alert("You already bid, wait for others");
+    // Prevent the SAME person from bidding twice in a row
+    if (a.lastBid === role) {
+      alert("You are the current highest bidder!");
       return;
     }
-    
+
     db.ref("teams/" + role).once("value", ts => {
       const t = ts.val();
       if (!t || t.purse < a.price || t.slots <= 0) {
@@ -282,25 +283,31 @@ function bid() {
       }
 
       let pair = a.activePair || {};
-      if (Object.keys(pair).length >= 2 && !pair[role]) {
-        alert("Only 2 owners allowed");
+      const participants = Object.keys(pair);
+
+      // LOGIC: If there are already 2 people bidding and YOU aren't one of them, block you.
+      if (participants.length >= 2 && !pair[role]) {
+        alert("Bidding limit reached (2 owners max). Wait for someone to drop out!");
         return;
       }
 
+      // Add current user to the active pair
       pair[role] = true;
+
       db.ref("auction").update({
         activePair:  pair,
         lastBid:     role,
-        lock:        true,
+        lastBidderLocked: role, // Lock the current bidder
+        lock:        true,      // Lock the UI until Admin clicks +10
         canIncrease: true
       });
     });
   });
 }
-
 function out() {
+  // This removes the user from the activePair in Firebase
   db.ref("auction/activePair/" + role).remove();
-  alert("You are OUT");
+  alert("You have dropped out of this player's bidding.");
 }
 
 /* ================= OWNER TAB SWITCHING ================= */
