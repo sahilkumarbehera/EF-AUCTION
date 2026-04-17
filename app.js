@@ -1,7 +1,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyDI90juhgTmNBv_lTcCkImhe4GfNlef6YQ",
   authDomain: "auction-auction-d049a.firebaseapp.com",
-  databaseURL: "https://auction-auction-d049a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://auction-auction-d049a-default-rtdb.asia-southeast1.firebasedatabase.app/",
   projectId: "auction-auction-d049a",
   storageBucket: "auction-auction-d049a.firebasestorage.app",
   messagingSenderId: "150739598900",
