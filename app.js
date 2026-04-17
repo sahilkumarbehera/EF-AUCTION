@@ -266,6 +266,12 @@ function bid() {
     if (!a || a.lock) { alert("Wait for admin"); return; }
     if (a.lastBidderLocked === role) { alert("You already bid, wait"); return; }
 
+    // ❌ SAME OWNER trying to bid again
+    if (a.lastBidderLocked === role) {
+      alert("You already bid, wait for others");
+      return;
+    }
+    
     db.ref("teams/" + role).once("value", ts => {
       const t = ts.val();
       if (!t || t.purse < a.price || t.slots <= 0) {
