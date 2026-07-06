@@ -38,7 +38,7 @@ kbcWin.volume  = 0.9;
 kbcLose.volume = 0.9;
 
 /* ================= GLOBALS ================= */
-const TEAMS = ["UK", "AH", "TF", "GOK", "TXS", "EM"];
+const TEAMS = ["SHP", "CM", "A7", "AG", "LS", "LIT"];
 
 // BUG FIX: isLoggedIn was assigned but never declared — added explicit declaration.
 let role       = "";
@@ -47,12 +47,12 @@ let hideTimer  = null;
 
 const ADMIN_PASSWORD  = "124421";
 const OWNER_PASSWORDS = {
-  "UK": "26786",
-  "AH":  "26202",
-  "TF":  "26914",
-  "GOK":  "26731",
-  "TXS": "26983",
-  "EM": "26500"
+  "SHP": "26786",
+  "CM":  "26202",
+  "A7":  "26914",
+  "AG":  "26731",
+  "LS": "26983",
+  "LIT": "26500"
 };
 
 /* ================= LOGIN ================= */
