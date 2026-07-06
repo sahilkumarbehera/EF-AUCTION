@@ -38,7 +38,7 @@ kbcWin.volume  = 0.9;
 kbcLose.volume = 0.9;
 
 /* ================= GLOBALS ================= */
-const TEAMS = ["SHP", "CM", "A7", "AG", "LS", "LIT"];
+const TEAMS = ["SHP", "CM", "A7", "AG", "LS", "LIT" , "BV"];
 
 // BUG FIX: isLoggedIn was assigned but never declared — added explicit declaration.
 let role       = "";
@@ -52,7 +52,8 @@ const OWNER_PASSWORDS = {
   "A7":  "26914",
   "AG":  "26731",
   "LS": "26983",
-  "LIT": "26500"
+  "LIT": "26500",
+  "BV" : "26990"
 };
 
 /* ================= LOGIN ================= */
@@ -106,7 +107,7 @@ function handleLogin() {
 /* ================= INIT ================= */
 function initTeams() {
   TEAMS.forEach(t => {
-    db.ref("teams/" + t).set({ purse: 1200, slots: 7 });
+    db.ref("teams/" + t).set({ purse: 1200, slots: 6 });
   });
 }
 
@@ -242,7 +243,7 @@ function resetAuction() {
   db.ref("soldPlayers").remove();
 
   TEAMS.forEach(t => {
-    db.ref("teams/" + t).set({ purse: 1200, slots: 7 });
+    db.ref("teams/" + t).set({ purse: 1200, slots: 6 });
   });
 
   db.ref("auction").set({
@@ -417,7 +418,7 @@ db.ref("teams").on("value", snap => {
       <div class="card ${myClass}">
         <b>${c.key}</b>${star}<br>
         Purse: ${t.purse}<br>
-        Slots: ${t.slots}/7
+        Slots: ${t.slots}/6
       </div>
     `;
   });
